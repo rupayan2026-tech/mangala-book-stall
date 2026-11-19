@@ -104,27 +104,7 @@ function showPrice(){
   }
 }
 
-/* ---------- Simple Chat Bot Placeholder ---------- */
-function initChatBot(){
-  const botDiv=document.createElement('div');
-  botDiv.id='chatBot';
-  botDiv.style.position='fixed';
-  botDiv.style.bottom='0';
-  botDiv.style.right='0';
-  botDiv.style.width='300px';
-  botDiv.style.maxHeight='400px';
-  botDiv.style.border='1px solid var(--navy)';
-  botDiv.style.borderRadius='8px 8px 0 0';
-  botDiv.style.background='var(--cream)';
-  botDiv.style.boxShadow='0 0 10px rgba(0,0,0,0.2)';
-  botDiv.innerHTML=`<div style="padding:8px;background:var(--navy);color:#fff;font-weight:600;">🗨️ চ্যাট বট</div><div id="botBody" style="padding:8px;overflow-y:auto;height:250px;font-size:14px;"></div><input id="botInput" type="text" placeholder="আপনার প্রশ্ন লিখুন..." style="width:100%;box-sizing:border-box;padding:6px;border:none;outline:none;"/>`;
-  document.body.appendChild(botDiv);
-  const input=document.getElementById('botInput');
-  const bodyDiv=document.getElementById('botBody');
-  input.addEventListener('keypress',e=>{if(e.key==='Enter'){ const q=input.value.trim(); if(q){ bodyDiv.innerHTML+=`<div style="text-align:right;color:var(--navy);"><b>আপনি:</b> ${q}</div>`; // simple canned answer
-      setTimeout(()=>{bodyDiv.innerHTML+=`<div style="color:var(--red);"><b>বট:</b> দুঃখিত, এখনো কোনো উত্তর সংযুক্ত নেই।</div>`; botDiv.scrollTop=botDiv.scrollHeight;},800); input.value=''; } } });
-}
-initChatBot();
+
 </script></section><section class="contact" id="contact"><div><h2>বই দরকার? যোগাযোগ করুন</h2><p>আপনার প্রয়োজনের বই আছে কি না জানতে আগে ফোন করুন। আমরা আপনাকে সঠিক বই খুঁজে দিতে সাহায্য করব।</p></div><div class="contactbox"><div>📍 <b>ঠিকানা:</b> বিজয়গঞ্জ বাজার, লক্ষ্মীকান্তপুর<br><small>ICICI BANK-এর নিচে</small></div><div>📞 <b>ফোন:</b> <a href="tel:8145265661">8145265661</a></div><div>📞 <b>অন্য নম্বর:</b> <a href="tel:7602102923">7602102923</a></div></div></section></main><footer class="footer">© ২০২৬ মঙ্গলা বুক স্টল • ভালো বই পড়ে তোলে উজ্জ্বল ভবিষ্যৎ</footer></body></html>
 
 
