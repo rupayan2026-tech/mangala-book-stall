@@ -150,3 +150,31 @@ document.querySelectorAll('.shareBtn, .fabShare').forEach(btn=>btn.addEventListe
 
 
 
+
+<script>
+ // Enhanced Share button functionality (icons, copy link, lower close)
+ function openShareMenu(){
+   const url = window.location.href;
+   const title = document.title;
+   const whatsapp = `https://api.whatsapp.com/send?text=${encodeURIComponent(title + ' - ' + url)}`;
+   const facebook = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+   const shareHtml = `<div class="shareMenu" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:20px 30px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.2);z-index:1000;max-width:90%;text-align:center;">
+     <div style="margin-bottom:12px;font-weight:600;font-size:1.1em;">Share this page</div>
+     <a href="${whatsapp}" target="_blank" style="margin:8px;display:inline-flex;align-items:center;">
+       <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width:24px;height:24px;margin-right:6px;"/>WhatsApp
+     </a>
+     <a href="${facebook}" target="_blank" style="margin:8px;display:inline-flex;align-items:center;">
+       <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" style="width:24px;height:24px;margin-right:6px;"/>Facebook
+     </a>
+     <button onclick="navigator.clipboard.writeText(url).then(()=>alert('Link copied!')).catch(()=>alert('Copy failed'))" style="margin:8px;padding:6px 12px;">Copy Link</button>
+     <div style="margin-top:24px;">
+       <button onclick="document.querySelector('.shareMenu').remove()" style="padding:6px 12px;">Close</button>
+     </div>
+   </div>`;
+   const wrapper = document.createElement('div');
+   wrapper.innerHTML = shareHtml;
+   document.body.appendChild(wrapper);
+ }
+ // Re-bind to both share buttons (overwrites previous binding)
+ document.querySelectorAll('.shareBtn, .fabShare').forEach(btn=>btn.addEventListener('click', openShareMenu));
+</script>
