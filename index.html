@@ -399,7 +399,7 @@ function openShareMenu(){
 
   // Invitation Card button – shares a ready‑made invitation text
   document.getElementById('inviteCardBtn').addEventListener('click', () => {
-    const invitationText = `🌟 You're invited! 🌟\n\nCheck out this page:\n${url}`;
+    const invitationText = `📚 মঙ্গলা বুক স্টলে আপনাকে আমন্ত্রণ!\n\nবইয়ের দাম ও তথ্য দেখতে এই লিংকে ক্লিক করুন:\n${url}`;
     if (navigator.share) {
       navigator.share({title: 'Invitation', text: invitationText, url}).catch(()=>{});
     } else {
