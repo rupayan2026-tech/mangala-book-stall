@@ -413,17 +413,9 @@ function openShareMenu(){
       const button = card.querySelector('#shareInviteNow');
       button.textContent = 'ছবি তৈরি হচ্ছে...';
       try {
-        if (!window.html2canvas) {
-          await new Promise((resolve, reject) => {
-            const script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-            script.onload = resolve;
-            script.onerror = reject;
-            document.head.appendChild(script);
-          });
-        }
-        const imageCanvas = await html2canvas(card.querySelector('div'), {backgroundColor:'#ffffff', scale:2, useCORS:true});
-        const blob = await new Promise(resolve => imageCanvas.toBlob(resolve, 'image/png'));
+        const imageResponse = await fetch(encodeURI('ChatGPT Image Nov 20, 2026, 11_39_27 AM.png'), {cache:'no-store'});
+        if (!imageResponse.ok) throw new Error('Invitation image not found');
+        const blob = await imageResponse.blob();
         const file = new File([blob], 'mangala-book-stall-invitation.png', {type:'image/png'});
         if (navigator.share && (!navigator.canShare || navigator.canShare({files:[file]}))) {
           await navigator.share({title:'মঙ্গলা বুক স্টল - Invitation', text:invitationText, url, files:[file]});
