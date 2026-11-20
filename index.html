@@ -58,8 +58,11 @@ document.querySelectorAll('.shareBtn, .fabShare').forEach(btn=>btn.addEventListe
       alert('Card share support নেই। Link copy হয়েছে।');
     }
   }
+  const hideLegacyOption = () => document.querySelectorAll('#inviteCardBtn').forEach(button => button.style.display='none');
+  hideLegacyOption();
+  new MutationObserver(hideLegacyOption).observe(document.body, {childList:true, subtree:true});
   document.addEventListener('click', function(e){
-    const button=e.target.closest('#inviteCardBtn');
+    const button=e.target.closest('.shareBtn, .fabShare, #shareNativeBtn, #inviteCardBtn');
     if(button){ e.preventDefault(); e.stopImmediatePropagation(); shareInvitation(); }
   }, true);
 })();
