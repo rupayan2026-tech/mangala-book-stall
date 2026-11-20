@@ -562,3 +562,97 @@ document.querySelectorAll('.shareBtn, .fabShare').forEach(btn => {
   btn.addEventListener('click', openShareMenu);
 });
 </script>
+
+<script>
+// Final override: Invitation Card shares the invitation text + link together
+function openShareMenu(){
+  // Clean any previous modals
+  document.querySelectorAll('.shareMenu, .inviteCard').forEach(m=>m.remove());
+
+  const url   = window.location.href;
+  const title = document.title;
+  const invitationText = `🌟 You're invited! 🌟\n\nCheck out this page: ${url}`;
+  const whatsapp = `https://api.whatsapp.com/send?text=${encodeURIComponent(invitationText)}`;
+  const facebook = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(invitationText)}`;
+
+  const shareHtml = `<div class="shareMenu" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#e0f7ff,#fff);padding:20px 30px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.2);z-index:1000;max-width:90%;text-align:center;">
+    <div style="margin-bottom:12px;font-weight:600;font-size:1.1em;color:#072c63;">Share this page</div>
+    <a href="${whatsapp}" target="_blank" style="margin:8px;display:inline-flex;align-items:center;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width:24px;height:24px;margin-right:6px;"/>WhatsApp
+    </a>
+    <a href="${facebook}" target="_blank" style="margin:8px;display:inline-flex;align-items:center;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" style="width:24px;height:24px;margin-right:6px;"/>Facebook
+    </a>
+    <button id="shareNativeBtn" style="margin:8px;padding:6px 12px;">Share (native)</button>
+    <button id="inviteCardBtn" style="margin:8px;padding:6px 12px;">Invitation Card</button>
+    <div style="margin-top:24px;">
+      <button id="closeShareBtn" style="padding:6px 12px;">Close</button>
+    </div>
+  </div>`;
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = shareHtml;
+  document.body.appendChild(wrapper);
+
+  // Native share – include invitation text
+  const nativeBtn = document.getElementById('shareNativeBtn');
+  if (navigator.share) {
+    nativeBtn.addEventListener('click', () => {
+      navigator.share({title, text: invitationText, url}).catch(()=>{});
+      document.querySelector('.shareMenu').remove();
+    });
+  } else {
+    nativeBtn.addEventListener('click', () => {
+      // fallback just copy the invitation text
+      navigator.clipboard.writeText(invitationText).then(()=>alert('Invitation copied!')).catch(()=>alert('Copy failed'));
+      document.querySelector('.shareMenu').remove();
+    });
+  }
+
+  // Invitation Card button – share invitation + show visual card with QR
+  document.getElementById('inviteCardBtn').addEventListener('click', () => {
+    // First trigger the share (native or fallback)
+    if (navigator.share) {
+      navigator.share({title, text: invitationText, url}).catch(()=>{});
+    } else {
+      // fallback: open WhatsApp and Facebook windows simultaneously
+      window.open(whatsapp, '_blank');
+      window.open(facebook, '_blank');
+    }
+    // Then display a visual card (optional) with QR code
+    document.querySelector('.shareMenu').remove();
+    const cardHtml = `<div class="inviteCard" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:20px 30px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.15);z-index:1000;max-width:90%;text-align:center;position:relative;">
+      <h2 style="margin:0 0 12px;color:#072c63;">You're invited!</h2>
+      <p style="margin:0 0 12px;">${invitationText.replace(/\n/g, '<br/>')}</p>
+      <a href="${url}" target="_blank" style="word-break:break-all;color:#0b6fba;">${url}</a>
+      <div style="margin-top:16px;">
+        <button id="copyInviteBtn" style="margin:8px;padding:6px 12px;">Copy Link</button>
+        <button id="closeInviteBtn" style="margin:8px;padding:6px 12px;">Close</button>
+      </div>
+      <div id="inviteQr" style="position:absolute;top:8px;right:8px;width:100px;height:100px;overflow:hidden;"></div>
+    </div>`;
+    const cWrapper = document.createElement('div');
+    cWrapper.innerHTML = cardHtml;
+    document.body.appendChild(cWrapper);
+    // QR generation (uses existing QRCode lib)
+    if (window.QRCode) {
+      new QRCode(document.getElementById('inviteQr'), {text: url, width:100, height:100, colorDark:'#072c63', colorLight:'#fff', correctLevel: QRCode.CorrectLevel.H});
+    }
+    document.getElementById('copyInviteBtn').addEventListener('click', () => {
+      navigator.clipboard.writeText(invitationText).then(()=>alert('Invitation copied!')).catch(()=>alert('Copy failed'));
+    });
+    document.getElementById('closeInviteBtn').addEventListener('click', () => {
+      document.querySelector('.inviteCard').remove();
+    });
+  });
+
+  // Close button – single click
+  document.getElementById('closeShareBtn').addEventListener('click', () => {
+    document.querySelector('.shareMenu').remove();
+  });
+}
+// Re‑bind all share triggers to the newest definition
+document.querySelectorAll('.shareBtn, .fabShare').forEach(btn=>{
+  btn.removeEventListener('click', openShareMenu);
+  btn.addEventListener('click', openShareMenu);
+});
+</script>
