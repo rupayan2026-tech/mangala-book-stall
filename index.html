@@ -399,7 +399,22 @@ function openShareMenu(){
 
   // Invitation Card button – shares a ready‑made invitation text
   document.getElementById('inviteCardBtn').addEventListener('click', () => {
-    const invitationText = `📚 মঙ্গলা বুক স্টলে আপনাকে আমন্ত্রণ!\n\nবইয়ের দাম ও তথ্য দেখতে এই লিংকে ক্লিক করুন:\n${url}`;
+    const selected = books.find(b=>String(b.class)===classSelect.value&&b.company===companySelect.value&&b.type===typeSelect.value&&b.subject===subjectSelect.value);
+    const details = selected ? `\n✍️ লেখক: ${selected.author || '—'}\n💰 দাম: ₹${Number(selected.printing_price).toFixed(2)}\n🎁 ছাড়: ${selected.discount_percent}%` : '';
+    const invitationText = `📚 মঙ্গলা বুক স্টলে আপনাকে আমন্ত্রণ!\n\n📖 ${subjectSelect.value || 'বই'} | ক্লাস ${classSelect.value || '—'}\n🏢 ${companySelect.value || '—'} • ${typeSelect.value || '—'}${details}\n\nবইয়ের দাম ও তথ্য দেখতে এই লিংকে ক্লিক করুন:\n${url}`;
+    document.querySelector('.shareMenu').remove();
+    const card = document.createElement('div');
+    card.className = 'inviteCard';
+    card.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#072c63,#0b6fba 58%,#ffd61a 58%);padding:4px;border-radius:20px;box-shadow:0 12px 32px #001a3566;z-index:1000;width:min(92vw,390px);';
+    card.innerHTML = `<div style="background:#fff;border-radius:17px;padding:22px;text-align:center;color:#072c63"><div style="font-size:26px">📚</div><h2 style="margin:5px 0 10px">মঙ্গলা বুক স্টল</h2><div style="font-size:25px;font-weight:800;margin:10px 0">আপনাকে আমন্ত্রণ</div><p style="font-weight:600">বইয়ের দাম ও তথ্য দেখতে ভিজিট করুন</p><div style="background:#f3f8ff;border-radius:12px;padding:10px;margin:12px 0;text-align:left">${selected ? `<b>${selected.subject}</b><br>ক্লাস ${selected.class} • ${selected.type}<br>লেখক: ${selected.author || 'উল্লেখ নেই'}` : 'আপনার পছন্দের বই দেখুন'}</div><div id="inviteQr" style="display:inline-block;padding:6px;background:#fff;border:2px solid #ffd61a;border-radius:10px"></div><div style="font-size:11px;word-break:break-all;margin:8px 0;color:#0b6fba">${url}</div><button id="shareInviteNow" style="background:#ffd61a;color:#072c63;border:0;border-radius:999px;padding:11px 20px;font-weight:800;margin:5px">📤 Share Card</button><button id="closeInviteNow" style="background:#072c63;color:#fff;border:0;border-radius:999px;padding:11px 20px;font-weight:800;margin:5px">বন্ধ করুন</button></div>`;
+    document.body.appendChild(card);
+    if (window.QRCode) new QRCode(card.querySelector('#inviteQr'), {text:url, width:92, height:92, colorDark:'#072c63', colorLight:'#ffffff'});
+    card.querySelector('#shareInviteNow').addEventListener('click', () => {
+      if (navigator.share) navigator.share({title:'মঙ্গলা বুক স্টল - Invitation', text:invitationText, url}).catch(()=>{});
+      else navigator.clipboard.writeText(invitationText).then(()=>alert('Invitation text copied!')).catch(()=>alert('Copy failed'));
+    });
+    card.querySelector('#closeInviteNow').addEventListener('click', () => card.remove());
+    return;
     if (navigator.share) {
       navigator.share({title: 'Invitation', text: invitationText, url}).catch(()=>{});
     } else {
