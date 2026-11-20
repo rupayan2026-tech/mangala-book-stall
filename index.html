@@ -34,6 +34,36 @@ function openShareMenu(){
 }
 document.querySelectorAll('.shareBtn, .fabShare').forEach(btn=>btn.addEventListener('click', openShareMenu));
 </script>
+
+<script>
+// Final share fix: stop legacy handlers and share the real invitation image + link.
+(function(){
+  const invitationImage = 'ChatGPT Image Nov 20, 2026, 11_39_27 AM.png';
+  async function shareInvitation(){
+    const url = window.location.href;
+    const text = `📚 মঙ্গলা বুক স্টলে আপনাকে আমন্ত্রণ!\n\nবইয়ের দাম ও তথ্য দেখতে এই লিংকে ক্লিক করুন:\n${url}`;
+    try{
+      const response = await fetch(encodeURI(invitationImage), {cache:'no-store'});
+      if(!response.ok) throw new Error('image unavailable');
+      const file = new File([await response.blob()], 'mangala-book-stall-invitation.png', {type:'image/png'});
+      if(navigator.share && (!navigator.canShare || navigator.canShare({files:[file]}))){
+        await navigator.share({title:'মঙ্গলা বুক স্টল', text, url, files:[file]});
+      }else{
+        const a=document.createElement('a'); a.href=URL.createObjectURL(file); a.download=file.name; a.click();
+        await navigator.clipboard.writeText(text);
+        alert('Invitation Card download হয়েছে এবং link copy হয়েছে। WhatsApp-এ দুটো একসাথে attach করুন।');
+      }
+    }catch(e){
+      await navigator.clipboard.writeText(text).catch(()=>{});
+      alert('Card share support নেই। Link copy হয়েছে।');
+    }
+  }
+  document.addEventListener('click', function(e){
+    const button=e.target.closest('#inviteCardBtn');
+    if(button){ e.preventDefault(); e.stopImmediatePropagation(); shareInvitation(); }
+  }, true);
+})();
+</script>
 <script>
 /* ---------- Theme Switcher ---------- */
 const themeButtons = document.querySelectorAll('.themeBtn');
